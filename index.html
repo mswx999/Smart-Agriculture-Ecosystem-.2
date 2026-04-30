@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriTech — Farmer Empowerment Platform</title>
+  <meta name="description" content="AgriTech — Connecting farmers with government schemes, equipment financing, crop insurance, and direct market access for better livelihoods.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDKs (compat for vanilla JS) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     TOAST NOTIFICATION
+     ════════════════════════════════════════ -->
+<div id="toast" class="toast">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Success</span>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     LANDING PAGE
+     ════════════════════════════════════════ -->
+<div id="page-landing" class="page active">
+
+  <!-- ── Navbar ── -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <div class="logo" onclick="showPage('landing')">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/>
+          <path d="M12 10v6"/>
+          <path d="M9 13l3-3 3 3"/>
+        </svg>
+        <span>AgriTech</span>
+      </div>
+      <div class="nav-links" id="nav-links">
+        <a onclick="scrollToSection('#features')">Features</a>
+        <a onclick="scrollToSection('#how-it-works')">How it Works</a>
+        <a onclick="scrollToSection('#solutions')">Solutions</a>
+        <a onclick="scrollToSection('#tech-stack')">Tech Stack</a>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-ghost" onclick="showPage('login')">Sign In</button>
+        <button class="btn-primary" onclick="showPage('register')">Get Started</button>
+      </div>
+      <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <!-- Mobile nav -->
+    <div id="mobile-nav" class="mobile-nav">
+      <a onclick="scrollToSection('#features');toggleMobileNav()">Features</a>
+      <a onclick="scrollToSection('#how-it-works');toggleMobileNav()">How it Works</a>
+      <a onclick="scrollToSection('#solutions');toggleMobileNav()">Solutions</a>
+      <a onclick="scrollToSection('#tech-stack');toggleMobileNav()">Tech Stack</a>
+      <hr>
+      <a onclick="showPage('login');toggleMobileNav()">Sign In</a>
+      <a onclick="showPage('register');toggleMobileNav()" class="mobile-cta">Get Started Free</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section ── -->
+  <section class="hero">
+    <div class="hero-badge reveal">🌾 Empowering Farmers Across India</div>
+    <h1 class="reveal">One Platform for<br><span class="gradient-text">Every Farmer's Need</span></h1>
+    <p class="hero-sub reveal">Access government schemes, acquire equipment on easy credit, protect your crop with insurance, and sell directly to buyers — everything a farmer needs, in one place.</p>
+    <div class="hero-buttons reveal">
+      <button class="btn-primary btn-lg" onclick="showPage('register')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/></svg>
+        Register as a Farmer
+      </button>
+      <button class="btn-outline btn-lg" onclick="scrollToSection('#how-it-works')">
+        See How it Works
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="hero-stats reveal">
+      <div class="stat"><strong>N/A</strong><span>Registered Farmers</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong>N/A</strong><span>Govt Schemes Listed</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong>N/A</strong><span>Insurance Claims Settled</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><strong>N/A</strong><span>Equipment Listings</span></div>
+    </div>
+  </section>
+
+  <!-- ── How it Works ── -->
+  <section id="how-it-works" class="section">
+    <div class="section-label reveal">HOW IT WORKS</div>
+    <h2 class="section-title reveal">Four Steps to Farmer Empowerment</h2>
+    <p class="section-sub reveal">From registration to better income — we support every stage of a farmer's journey.</p>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Register &amp; Verify</h3>
+        <p>Create your farmer profile with land records and Aadhaar. Get verified in minutes to access all platform services.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h3>Access Gov Schemes</h3>
+        <p>Browse 200+ central and state government schemes. Apply directly through the platform — subsidies, PM-KISAN, Kisan Credit Card and more.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/><path d="M12 10v4"/><path d="M10 12h4"/></svg>
+        </div>
+        <h3>Insure &amp; Equip</h3>
+        <p>Get PMFBY crop insurance in minutes. Apply for equipment on easy EMI — tractors, harvesters, pumps, and more.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">04</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <h3>Sell &amp; Earn More</h3>
+        <p>List your produce on the marketplace. Connect with FPOs, mandis, and direct buyers. Get logistics support for timely delivery.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section id="features" class="section section-alt">
+    <div class="section-label reveal">FEATURES</div>
+    <h2 class="section-title reveal">Everything a Farmer Needs</h2>
+    <p class="section-sub reveal">Four powerful pillars designed to transform farming income and reduce risk for every farmer.</p>
+    <div class="features-grid">
+      <div class="feature-card reveal feature-highlight">
+        <div class="feature-icon icon-green">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h3>🏛️ Gov Connect</h3>
+        <p>Discover and apply for 200+ central &amp; state government schemes — PM-KISAN, Kisan Credit Card, subsidies, and more — all from one portal.</p>
+        <div class="feature-tag">Subsidies · KCC · PM-KISAN · eNAM</div>
+      </div>
+      <div class="feature-card reveal feature-highlight">
+        <div class="feature-icon icon-amber">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <h3>🚜 Equipment Acquisition</h3>
+        <p>Browse 5000+ farm equipment listings — tractors, harvesters, tillers, pumps. Apply for low-interest equipment loans and EMI schemes.</p>
+        <div class="feature-tag">Tractor Loans · EMI · Rentals · Subsidized</div>
+      </div>
+      <div class="feature-card reveal feature-highlight">
+        <div class="feature-icon icon-blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>🛡️ Crop Insurance</h3>
+        <p>Enrol in PMFBY and state crop insurance schemes in minutes. Track claim status, get instant payouts for crop damage due to natural calamities.</p>
+        <div class="feature-tag">PMFBY · Kharif · Rabi · Claim Tracking</div>
+      </div>
+      <div class="feature-card reveal feature-highlight">
+        <div class="feature-icon icon-purple">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </div>
+        <h3>📦 Selling &amp; Logistics</h3>
+        <p>List produce and connect directly with buyers, FPOs, and mandis. Arrange pickup logistics, track shipments, and get paid on time.</p>
+        <div class="feature-tag">Direct Buyers · FPO · Logistics · eNAM</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon icon-teal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
+        <h3>🌤️ Weather Advisories</h3>
+        <p>Hyperlocal weather forecasts and sowing advisories to help plan farming activities and reduce weather-related crop losses.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon icon-red">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>👥 FPO &amp; Cooperative Support</h3>
+        <p>Join or form Farmer Producer Organizations. Benefit from collective bargaining, group insurance, and bulk equipment procurement.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Solutions / Use Cases ── -->
+  <section id="solutions" class="section">
+    <div class="section-label reveal">WHO WE SERVE</div>
+    <h2 class="section-title reveal">Built for Every Farmer</h2>
+    <p class="section-sub reveal">From marginal farmers to agri-entrepreneurs — our platform serves the full spectrum of Indian agriculture.</p>
+    <div class="solutions-grid">
+      <div class="solution-card reveal">
+        <div class="solution-emoji">👨‍🌾</div>
+        <h3>Marginal &amp; Small Farmers</h3>
+        <p>Access PM-KISAN, Kisan Credit Card, PMFBY insurance, and subsidised equipment — all that was previously inaccessible, now at your fingertips.</p>
+      </div>
+      <div class="solution-card reveal">
+        <div class="solution-emoji">🏭</div>
+        <h3>Progressive Farmers</h3>
+        <p>Scale up with modern equipment loans, direct market linkages, and FPO membership to increase income and reduce dependence on middlemen.</p>
+      </div>
+      <div class="solution-card reveal">
+        <div class="solution-emoji">🤝</div>
+        <h3>Farmer Producer Orgs (FPOs)</h3>
+        <p>Manage member registrations, group insurance enrolment, collective selling, and bulk equipment procurement through a single dashboard.</p>
+      </div>
+      <div class="solution-card reveal">
+        <div class="solution-emoji">🏛️</div>
+        <h3>Government &amp; Agencies</h3>
+        <p>Streamline subsidy disbursement, scheme enrolment tracking, and insurance claim management across districts and states.</p>
+      </div>
+      <div class="solution-card reveal">
+        <div class="solution-emoji">🚛</div>
+        <h3>Agri-Logistics Providers</h3>
+        <p>List transport and cold-storage services, receive booking requests from farmers, and expand your agri-logistics business reach.</p>
+      </div>
+      <div class="solution-card reveal">
+        <div class="solution-emoji">🏬</div>
+        <h3>Buyers &amp; Traders</h3>
+        <p>Source fresh produce directly from verified farmers at transparent prices. Post buy orders, negotiate, and arrange pick-up logistics easily.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tech Stack ── -->
+  <section id="tech-stack" class="section section-alt">
+    <div class="section-label reveal">TECHNOLOGY</div>
+    <h2 class="section-title reveal">Built on Proven Infrastructure</h2>
+    <p class="section-sub reveal">A secure, scalable stack integrating government APIs, insurance portals, and logistics networks.</p>
+    <div class="tech-grid">
+      <div class="tech-card reveal">
+        <div class="tech-label">Frontend</div>
+        <div class="tech-name">HTML, CSS, JavaScript</div>
+        <div class="tech-desc">Responsive &amp; accessible</div>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-label">Backend</div>
+        <div class="tech-name">Node.js + Express</div>
+        <div class="tech-desc">RESTful API architecture</div>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-label">Database</div>
+        <div class="tech-name">Firebase Firestore</div>
+        <div class="tech-desc">Real-time NoSQL storage</div>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-label">Auth</div>
+        <div class="tech-name">Firebase Authentication</div>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-label">AI / ML</div>
+        <div class="tech-name">TensorFlow + Python</div>
+        <div class="tech-desc">Crop & disease models</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Testimonials ── -->
+  <section class="section">
+    <div class="section-label reveal">TESTIMONIALS</div>
+    <h2 class="section-title reveal">Trusted by Farmers Across India</h2>
+    <p class="section-sub reveal">Real stories from farmers who transformed their livelihoods with AgriTech.</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-placeholder reveal">
+        <div style="font-size:48px;margin-bottom:16px">💬</div>
+        <h3 style="font-size:18px;font-weight:600;color:var(--text2);margin-bottom:8px">Farmer Testimonials Coming Soon</h3>
+        <p style="font-size:14px;color:var(--text3);max-width:400px;margin:0 auto">We're collecting real stories from farmers across India who are benefiting from AgriTech. Check back soon!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer CTA ── -->
+  <section class="footer-cta">
+    <h2 class="reveal">Your Farm. Your Rights. Your Market.</h2>
+    <p class="reveal">Join 10,000+ farmers who are accessing government schemes, insuring their crops, and getting better prices — all from one platform.</p>
+    <button class="btn-primary btn-lg reveal" onclick="showPage('register')">Register as a Farmer — Free</button>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/>
+            <path d="M12 10v6"/><path d="M9 13l3-3 3 3"/>
+          </svg>
+          <span>AgriTech</span>
+        </div>
+        <p>Smart Agriculture for a Sustainable Future</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h4>Platform</h4>
+          <a onclick="scrollToSection('#features')">Features</a>
+          <a onclick="scrollToSection('#how-it-works')">How it Works</a>
+          <a onclick="scrollToSection('#solutions')">Solutions</a>
+          <a onclick="scrollToSection('#tech-stack')">Tech Stack</a>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <a href="#">About Us</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 AgriTech. Smart Agriculture for a Sustainable Future.</p>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     LOGIN PAGE
+     ════════════════════════════════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo" onclick="showPage('landing')" style="cursor:pointer">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/>
+            <path d="M12 10v6"/><path d="M9 13l3-3 3 3"/>
+          </svg>
+          <span>AgriTech</span>
+        </div>
+        <h2>Welcome Back</h2>
+        <p>Sign in to your account to access your dashboard</p>
+      </div>
+
+      <div id="login-error" class="auth-error" style="display:none"></div>
+
+      <div class="form-group">
+        <label for="login-email">Email Address</label>
+        <input type="email" id="login-email" placeholder="farmer@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+
+      <button class="btn-primary btn-full" id="login-btn" onclick="doLogin()">Sign In</button>
+
+      <div class="auth-divider"><span>or continue with</span></div>
+
+      <button class="btn-google" onclick="doGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Sign in with Google
+      </button>
+
+      <div class="auth-footer">
+        Don't have an account? <a onclick="showPage('register')">Create one</a>
+        <br>
+        <a onclick="showPage('landing')" class="back-link">← Back to home</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     REGISTER PAGE (3-step onboarding)
+     ════════════════════════════════════════ -->
+<div id="page-register" class="page">
+  <div class="auth-container">
+    <div class="auth-card auth-card-wide">
+      <div class="auth-header">
+        <div class="logo" onclick="showPage('landing')" style="cursor:pointer">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/>
+            <path d="M12 10v6"/><path d="M9 13l3-3 3 3"/>
+          </svg>
+          <span>AgriTech</span>
+        </div>
+        <h2>Create Account</h2>
+
+        <!-- Step indicators -->
+        <div class="step-dots">
+          <div class="step-dot active" id="sd1"><span>1</span></div>
+          <div class="step-line"></div>
+          <div class="step-dot" id="sd2"><span>2</span></div>
+          <div class="step-line"></div>
+          <div class="step-dot" id="sd3"><span>3</span></div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Account Credentials -->
+      <div id="reg-step1">
+        <div class="step-title">Step 1 of 3 — Account Credentials</div>
+        <div id="reg-error1" class="auth-error" style="display:none"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-fname">First Name *</label>
+            <input type="text" id="r-fname" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label for="r-lname">Last Name</label>
+            <input type="text" id="r-lname" placeholder="Last Name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="r-email">Email Address *</label>
+          <input type="email" id="r-email" placeholder="farmer@example.com">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-pass">Password *</label>
+            <input type="password" id="r-pass" placeholder="Min 8 characters">
+          </div>
+          <div class="form-group">
+            <label for="r-pass2">Confirm Password *</label>
+            <input type="password" id="r-pass2" placeholder="Re-enter password">
+          </div>
+        </div>
+        <button class="btn-primary btn-full" onclick="regNext1()">Continue →</button>
+      </div>
+
+      <!-- STEP 2: Personal Details -->
+      <div id="reg-step2" style="display:none">
+        <div class="step-title">Step 2 of 3 — Personal Details</div>
+        <div id="reg-error2" class="auth-error" style="display:none"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-phone">Phone Number</label>
+            <input type="tel" id="r-phone" placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label for="r-dob">Date of Birth</label>
+            <input type="date" id="r-dob">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-state">State / Region</label>
+            <select id="r-state">
+              <option value="">Select state</option>
+              <option>Uttar Pradesh</option>
+              <option>Punjab</option>
+              <option>Haryana</option>
+              <option>Maharashtra</option>
+              <option>Madhya Pradesh</option>
+              <option>Rajasthan</option>
+              <option>Karnataka</option>
+              <option>Tamil Nadu</option>
+              <option>Gujarat</option>
+              <option>Bihar</option>
+              <option>West Bengal</option>
+              <option>Andhra Pradesh</option>
+              <option>Telangana</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="r-farmtype">Farm Type</label>
+            <select id="r-farmtype">
+              <option value="">Select type</option>
+              <option>Subsistence Farming</option>
+              <option>Commercial Farming</option>
+              <option>Organic Farming</option>
+              <option>Mixed Farming</option>
+              <option>Dairy Farming</option>
+              <option>Horticulture</option>
+              <option>Plantation</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="regBack(1)">← Back</button>
+          <button class="btn-primary" onclick="regNext2()">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Farm Setup -->
+      <div id="reg-step3" style="display:none">
+        <div class="step-title">Step 3 of 3 — Farm Setup</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-farmsize">Farm Size</label>
+            <select id="r-farmsize">
+              <option value="">Select size</option>
+              <option>Less than 1 acre</option>
+              <option>1–5 acres</option>
+              <option>5–20 acres</option>
+              <option>20–100 acres</option>
+              <option>100+ acres</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="r-irrigation">Irrigation Type</label>
+            <select id="r-irrigation">
+              <option value="">Select type</option>
+              <option>Rainfed</option>
+              <option>Canal</option>
+              <option>Tube Well</option>
+              <option>Drip Irrigation</option>
+              <option>Sprinkler</option>
+              <option>Mixed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="r-crops">Primary Crops (comma separated)</label>
+          <input type="text" id="r-crops" placeholder="e.g. Wheat, Rice, Sugarcane">
+        </div>
+        <div class="form-group">
+          <label for="r-goals">Primary Goal</label>
+          <select id="r-goals">
+            <option value="">Select goal</option>
+            <option>Access government schemes &amp; subsidies</option>
+            <option>Get crop insurance (PMFBY)</option>
+            <option>Buy or rent farm equipment</option>
+            <option>Sell produce at better prices</option>
+            <option>All of the above</option>
+          </select>
+        </div>
+        <div class="terms-check">
+          <input type="checkbox" id="r-terms">
+          <label for="r-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="regBack(2)">← Back</button>
+          <button class="btn-primary" onclick="doRegister()">Create Account</button>
+        </div>
+      </div>
+
+      <div class="auth-footer">
+        Already have an account? <a onclick="showPage('login')">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     DASHBOARD
+     ════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dashboard-layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <div class="sb-header">
+        <div class="sb-avatar-wrap">
+          <div class="sb-avatar" id="sb-avatar">AG</div>
+        </div>
+        <div class="sb-name" id="sb-name">Farmer</div>
+        <div class="sb-role">Smart Farmer</div>
+      </div>
+      <nav class="sb-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Dashboard
+        </div>
+        <div class="nav-item" onclick="switchTab('govconnect')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Gov Connect
+        </div>
+        <div class="nav-item" onclick="switchTab('equipment')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+          Equipment
+        </div>
+        <div class="nav-item" onclick="switchTab('insurance')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Crop Insurance
+        </div>
+        <div class="nav-item" onclick="switchTab('market')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Sell &amp; Logistics
+        </div>
+        <div class="nav-item" onclick="switchTab('weather')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/><circle cx="12" cy="12" r="4"/></svg>
+          Weather
+        </div>
+        <div class="nav-item" onclick="switchTab('settings')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings
+        </div>
+      </nav>
+      <div class="sb-footer">
+        <button class="btn-signout" onclick="doSignOut()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── Mobile Top Bar ── -->
+    <div class="dash-topbar">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title">AgriTech Dashboard</div>
+      <div class="topbar-avatar" id="top-avatar" onclick="switchTab('settings')">AG</div>
+    </div>
+
+    <!-- ── Main Content ── -->
+    <main class="dash-main">
+
+      <!-- TAB: Dashboard Home -->
+      <div id="tab-home" style="display:block">
+        <div class="dash-header">
+          <div>
+            <h1 id="dash-greeting">Good evening, Farmer</h1>
+            <p class="dash-sub" id="dash-date-sub">Here's your farm overview for today</p>
+          </div>
+          <div class="dash-weather-mini" id="dash-weather-mini" onclick="switchTab('weather')">
+            <span class="mini-weather-icon">🌤️</span>
+            <span class="mini-weather-temp">28°C</span>
+            <span class="mini-weather-desc">Partly Cloudy</span>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="metrics-grid" id="home-metrics"></div>
+
+        <!-- Progress + Upcoming -->
+        <div class="dash-grid-2">
+          <div class="dash-card">
+            <div class="card-header"><h3>📋 Application Progress</h3></div>
+            <div id="progress-list" class="progress-list"></div>
+          </div>
+          <div class="dash-card">
+            <div class="card-header"><h3>📅 Upcoming Events</h3></div>
+            <div id="events-list" class="events-list"></div>
+          </div>
+        </div>
+
+        <!-- Recent Activity + Quick Actions -->
+        <div class="dash-grid-2" style="margin-top:24px">
+          <div class="dash-card">
+            <div class="card-header"><h3>🔔 Recent Activity</h3></div>
+            <div id="activity-list" class="activity-list"></div>
+          </div>
+          <div class="dash-card">
+            <div class="card-header"><h3>⚡ Quick Actions</h3></div>
+            <div class="quick-actions">
+              <button class="action-btn action-green" onclick="switchTab('govconnect')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                Gov Schemes
+              </button>
+              <button class="action-btn action-amber" onclick="switchTab('equipment')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                Equipment
+              </button>
+              <button class="action-btn action-blue" onclick="switchTab('insurance')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Insurance
+              </button>
+              <button class="action-btn action-red" onclick="switchTab('market')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                Sell Produce
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Gov Connect -->
+      <div id="tab-govconnect" style="display:none">
+        <div class="dash-header">
+          <div>
+            <h1>🏛️ Gov Connect</h1>
+            <p class="dash-sub">Browse and apply for government schemes, subsidies, and support programmes</p>
+          </div>
+        </div>
+        <div class="search-filter-bar">
+          <input type="text" id="gov-search" class="search-input" placeholder="🔍 Search schemes by name or keyword..." oninput="renderGovConnect()">
+          <div class="filter-tabs" id="gov-filters">
+            <button class="filter-tab active" onclick="setGovFilter('all',this)">All</button>
+            <button class="filter-tab" onclick="setGovFilter('Income Support',this)">Income Support</button>
+            <button class="filter-tab" onclick="setGovFilter('Credit',this)">Credit</button>
+            <button class="filter-tab" onclick="setGovFilter('Insurance',this)">Insurance</button>
+            <button class="filter-tab" onclick="setGovFilter('Equipment Subsidy',this)">Equipment</button>
+            <button class="filter-tab" onclick="setGovFilter('Market Access',this)">Market</button>
+          </div>
+        </div>
+        <div id="govconnect-grid" class="market-grid"></div>
+        <div class="section-divider"></div>
+        <h3 class="sub-section-title">📄 My Applications</h3>
+        <div id="gov-applications" class="applications-list"></div>
+      </div>
+
+      <!-- TAB: Equipment -->
+      <div id="tab-equipment" style="display:none">
+        <div class="dash-header">
+          <div>
+            <h1>🚜 Equipment Hub</h1>
+            <p class="dash-sub">Rent, share, or buy farm equipment — tractors, harvesters, pumps & more</p>
+          </div>
+          <button class="btn-primary" onclick="openAddEquipmentModal()">+ List My Equipment</button>
+        </div>
+        <div class="sub-tabs">
+          <button class="sub-tab active" onclick="setEquipSubTab('rent',this)">🔄 Browse & Rent</button>
+          <button class="sub-tab" onclick="setEquipSubTab('buy',this)">🛒 Buy & Loan</button>
+          <button class="sub-tab" onclick="setEquipSubTab('my',this)">📦 My Equipment</button>
+        </div>
+        <div id="equip-rent-content" class="sub-tab-content active">
+          <div class="search-filter-bar">
+            <input type="text" id="equip-search" class="search-input" placeholder="🔍 Search equipment..." oninput="renderEquipmentRent()">
+            <div class="filter-tabs" id="equip-filters">
+              <button class="filter-tab active" onclick="setEquipFilter('all',this)">All</button>
+              <button class="filter-tab" onclick="setEquipFilter('Tractor',this)">Tractors</button>
+              <button class="filter-tab" onclick="setEquipFilter('Harvester',this)">Harvesters</button>
+              <button class="filter-tab" onclick="setEquipFilter('Pump',this)">Pumps</button>
+              <button class="filter-tab" onclick="setEquipFilter('Tiller',this)">Tillers</button>
+              <button class="filter-tab" onclick="setEquipFilter('Drone',this)">Drones</button>
+            </div>
+          </div>
+          <div id="equip-rent-grid" class="market-grid"></div>
+        </div>
+        <div id="equip-buy-content" class="sub-tab-content">
+          <div id="equip-buy-grid" class="market-grid"></div>
+        </div>
+        <div id="equip-my-content" class="sub-tab-content">
+          <div id="equip-my-stats" class="stats-row"></div>
+          <div id="equip-my-grid" class="market-grid"></div>
+        </div>
+
+        <!-- Equipment Booking Modal -->
+        <div id="equip-booking-modal" class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>📅 Request Equipment Rental</h3>
+              <button class="modal-close" onclick="closeEquipBookingModal()">×</button>
+            </div>
+            <div id="equip-booking-name" style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--primary)"></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="equip-date-from">From Date</label>
+                <input type="date" id="equip-date-from">
+              </div>
+              <div class="form-group">
+                <label for="equip-date-to">To Date</label>
+                <input type="date" id="equip-date-to">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="equip-booking-notes">Notes (optional)</label>
+              <input type="text" id="equip-booking-notes" placeholder="e.g. Need delivery to field">
+            </div>
+            <button class="btn-primary btn-full" onclick="submitEquipBooking()">Submit Rental Request</button>
+          </div>
+        </div>
+
+        <!-- Add Equipment Modal -->
+        <div id="equip-add-modal" class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>📦 List Your Equipment</h3>
+              <button class="modal-close" onclick="closeAddEquipmentModal()">×</button>
+            </div>
+            <div class="form-group">
+              <label for="my-equip-name">Equipment Name</label>
+              <input type="text" id="my-equip-name" placeholder="e.g. Mahindra 575 Tractor">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="my-equip-category">Category</label>
+                <select id="my-equip-category">
+                  <option>Tractor</option><option>Harvester</option><option>Pump</option><option>Tiller</option><option>Drone</option><option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="my-equip-rate">Daily Rate (₹)</label>
+                <input type="number" id="my-equip-rate" placeholder="1500">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="my-equip-location">Location</label>
+              <input type="text" id="my-equip-location" placeholder="e.g. Meerut, UP">
+            </div>
+            <button class="btn-primary btn-full" onclick="addMyEquipment()">Publish Listing</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Crop Insurance -->
+      <div id="tab-insurance" style="display:none">
+        <div class="dash-header">
+          <div>
+            <h1>🛡️ Crop Insurance</h1>
+            <p class="dash-sub">Enrol in PMFBY, track claims, and estimate premiums</p>
+          </div>
+          <button class="btn-primary" onclick="openInsuranceEnrol()">+ Enrol in PMFBY</button>
+        </div>
+        <div id="insurance-stats" class="stats-row"></div>
+        <div id="insurance-content"></div>
+        <div class="section-divider"></div>
+        <h3 class="sub-section-title">💰 Premium Calculator</h3>
+        <div class="calculator-card">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="calc-crop">Select Crop</label>
+              <select id="calc-crop" onchange="calcPremium()"><option>Wheat</option><option>Rice (Paddy)</option><option>Maize</option><option>Cotton</option><option>Sugarcane</option><option>Mustard</option><option>Tomato</option><option>Potato</option></select>
+            </div>
+            <div class="form-group">
+              <label for="calc-area">Area (acres)</label>
+              <input type="number" id="calc-area" placeholder="5" value="5" oninput="calcPremium()">
+            </div>
+            <div class="form-group">
+              <label for="calc-season">Season</label>
+              <select id="calc-season" onchange="calcPremium()"><option>Kharif</option><option>Rabi</option><option>Zaid</option></select>
+            </div>
+          </div>
+          <div id="calc-result" class="calc-result"></div>
+        </div>
+        <div class="section-divider"></div>
+        <h3 class="sub-section-title">📈 Claims History</h3>
+        <div id="claims-timeline" class="claims-timeline"></div>
+
+        <!-- Insurance Enrol Modal -->
+        <div id="insurance-modal" class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>🛡️ Enrol in PMFBY</h3>
+              <button class="modal-close" onclick="closeInsuranceModal()">×</button>
+            </div>
+            <div class="form-group">
+              <label for="ins-crop">Crop Name</label>
+              <input type="text" id="ins-crop" placeholder="e.g. Wheat, Rice">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ins-season">Season</label>
+                <select id="ins-season"><option>Kharif 2025</option><option>Rabi 2025-26</option><option>Zaid 2026</option></select>
+              </div>
+              <div class="form-group">
+                <label for="ins-area">Area (acres)</label>
+                <input type="number" id="ins-area" placeholder="e.g. 5" oninput="autoCalcInsurancePremium()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="ins-premium">Estimated Premium (₹)</label>
+              <input type="text" id="ins-premium" placeholder="Enter area to calculate" disabled>
+            </div>
+            <button class="btn-primary btn-full" onclick="submitInsurance()">Submit Application</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Weather -->
+      <div id="tab-weather" style="display:none">
+        <div class="dash-header">
+          <div>
+            <h1>🌤️ Weather Advisory</h1>
+            <p class="dash-sub">Hyperlocal forecast and agricultural weather intelligence</p>
+          </div>
+        </div>
+        <div class="weather-current" id="weather-current"></div>
+        <div class="section-divider"></div>
+        <h3 class="sub-section-title">🌾 Farming Advisory</h3>
+        <div id="weather-advisory" class="advisory-grid"></div>
+        <div class="section-divider"></div>
+        <h3 class="sub-section-title">📅 5-Day Forecast</h3>
+        <div id="weather-forecast" class="weather-forecast"></div>
+        <div class="section-divider"></div>
+        <h3 class="sub-section-title">🌱 Crop Calendar</h3>
+        <div id="crop-calendar" class="crop-calendar"></div>
+      </div>
+
+      <!-- TAB: Sell & Logistics -->
+      <div id="tab-market" style="display:none">
+        <div class="dash-header">
+          <div>
+            <h1>📦 Sell & Logistics</h1>
+            <p class="dash-sub">List produce, track orders, and check live mandi prices</p>
+          </div>
+          <button class="btn-primary" onclick="openAddListing()">+ List Produce</button>
+        </div>
+        <div class="sub-tabs">
+          <button class="sub-tab active" onclick="setMarketSubTab('listings',this)">🌾 Marketplace</button>
+          <button class="sub-tab" onclick="setMarketSubTab('orders',this)">📦 My Orders</button>
+          <button class="sub-tab" onclick="setMarketSubTab('mandi',this)">💹 Mandi Prices</button>
+        </div>
+        <div id="market-listings-content" class="sub-tab-content active">
+          <div id="market-listings" class="market-grid"></div>
+        </div>
+        <div id="market-orders-content" class="sub-tab-content">
+          <div id="market-orders"></div>
+        </div>
+        <div id="market-mandi-content" class="sub-tab-content">
+          <div id="mandi-prices"></div>
+        </div>
+
+        <!-- Add Listing Modal -->
+        <div id="listing-modal" class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>🌾 Add New Listing</h3>
+              <button class="modal-close" onclick="closeListingModal()">×</button>
+            </div>
+            <div class="form-group">
+              <label for="lst-name">Product Name</label>
+              <input type="text" id="lst-name" placeholder="e.g. Organic Wheat">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="lst-price">Price (₹/quintal)</label>
+                <input type="number" id="lst-price" placeholder="2500">
+              </div>
+              <div class="form-group">
+                <label for="lst-qty">Quantity (quintals)</label>
+                <input type="number" id="lst-qty" placeholder="10">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="lst-category">Category</label>
+              <select id="lst-category">
+                <option>Grains</option><option>Vegetables</option><option>Fruits</option><option>Seeds</option><option>Fertilizers</option><option>Equipment</option>
+              </select>
+            </div>
+            <button class="btn-primary btn-full" onclick="addListing()">Publish Listing</button>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- TAB: Settings -->
+      <div id="tab-settings" style="display:none">
+        <div class="dash-header">
+          <h1>Settings</h1>
+          <p class="dash-sub">Manage your profile and account preferences</p>
+        </div>
+        <div class="settings-card">
+          <h3>Profile Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="set-name">Full Name</label>
+              <input type="text" id="set-name">
+            </div>
+            <div class="form-group">
+              <label for="set-email">Email</label>
+              <input type="email" id="set-email" disabled>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="set-phone">Phone</label>
+              <input type="tel" id="set-phone">
+            </div>
+            <div class="form-group">
+              <label for="set-location">Location</label>
+              <input type="text" id="set-location">
+            </div>
+          </div>
+          <button class="btn-primary" onclick="saveSettings()">Save Changes</button>
+        </div>
+        <div class="settings-card danger-zone">
+          <h3>Danger Zone</h3>
+          <p>Once you deactivate your account, you will lose access to all your farm data.</p>
+          <button class="btn-danger" onclick="if(confirm('Are you sure you want to deactivate your account?')) showToast('Account deactivation requested.')">Deactivate Account</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+</div>
+
+
+<!-- ── Confirm Modal (generic) ── -->
+<div id="confirm-modal" class="modal-overlay">
+  <div class="modal-card">
+    <h3>Confirm Action</h3>
+    <p id="confirm-msg">Are you sure?</p>
+    <div class="btn-row">
+      <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" id="confirm-action-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="app.js"></script>
+</body>
+</html>

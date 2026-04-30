@@ -1,0 +1,13 @@
+{
+  "name": "smart-agritech",
+  "version": "1.0.0",
+  "description": "Smart AgriTech — Integrated Agriculture Management Platform",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npx serve dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
