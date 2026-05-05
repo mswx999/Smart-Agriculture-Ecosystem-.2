@@ -621,9 +621,68 @@ function setGovFilter(filter, btn) {
 }
 
 function applyGovScheme(name) {
+  document.getElementById('gov-scheme-name').value = name;
+  if (currentUser) {
+    document.getElementById('gov-app-name').value = currentUser.name || '';
+    document.getElementById('gov-app-phone').value = currentUser.phone || '';
+    document.getElementById('gov-app-area').value = currentUser.farmSize || '';
+  }
+  document.getElementById('gov-apply-modal').classList.add('open');
+}
+
+function closeGovApplyModal() {
+  document.getElementById('gov-apply-modal').classList.remove('open');
+}
+
+async function submitGovApplication() {
+  const name = document.getElementById('gov-scheme-name').value;
+  const appName = document.getElementById('gov-app-name').value.trim();
+  const phone = document.getElementById('gov-app-phone').value.trim();
+  const aadhaar = document.getElementById('gov-app-aadhaar').value.trim();
+  const area = document.getElementById('gov-app-area').value.trim();
+
+  if (!appName || !phone || !aadhaar) {
+    showToast('Please fill in Name, Phone, and Aadhaar.');
+    return;
+  }
+
+  const btn = document.getElementById('gov-submit-btn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  const appData = {
+    schemeName: name,
+    applicantName: appName,
+    phone: phone,
+    aadhaar: aadhaar,
+    area: area,
+    status: 'submitted',
+    date: new Date().toISOString()
+  };
+
+  // Simulate network delay
+  await new Promise(r => setTimeout(r, 1000));
+
+  if (firebaseReady && auth.currentUser) {
+    try {
+      await getDB().collection('gov_applications').add({
+        ...appData,
+        userId: auth.currentUser.uid
+      });
+    } catch (e) {
+      console.error('Firestore save failed', e);
+    }
+  }
+
   govApplications.unshift({ name, date: new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}), status: 'submitted', icon: '📋' });
+  
+  btn.textContent = 'Submit Application';
+  btn.disabled = false;
+  closeGovApplyModal();
   renderGovConnect();
-  showToast('Application for ' + name + ' submitted! ✓');
+  showToast('Application for ' + name + ' submitted successfully! ✓');
+
+  document.getElementById('gov-app-aadhaar').value = '';
 }
 
 /* ══════════════════════════════════════════
@@ -807,7 +866,8 @@ function calcPremium() {
 /* ══════════════════════════════════════════
    WEATHER (enhanced)
 ══════════════════════════════════════════ */
-async function fetchLiveWeather() {
+async function fetchLiveWeather(isManual = false) {
+  if (isManual) showToast('Refreshing weather data... 🔄');
   try {
     const lat = 28.6139;
     const lon = 77.2090;
@@ -865,7 +925,10 @@ async function fetchLiveWeather() {
     if (weatherTab && weatherTab.style.display === 'block') {
       renderWeather();
     }
+    
+    if (isManual) showToast('Weather updated! 🌤️');
   } catch (err) {
+    if (isManual) showToast('Failed to refresh weather. ❌');
     console.error("Failed to fetch live weather, using fallback data:", err);
   }
 }
@@ -909,16 +972,99 @@ function renderWeather() {
 
 function openInsuranceEnrol() { document.getElementById('insurance-modal').classList.add('open'); }
 function closeInsuranceModal() { document.getElementById('insurance-modal').classList.remove('open'); }
+let pendingInsuranceData = null;
+
 function submitInsurance() {
   const crop = document.getElementById('ins-crop').value.trim();
   const area = document.getElementById('ins-area').value;
   const season = document.getElementById('ins-season').value;
-  if (!crop || !area) { showToast('Please fill in crop name and area.'); return; }
-  const premium = Math.round(area * 310); const sumIns = area * 15500;
-  SEED_INSURANCE.unshift({ crop: `${crop} (${season})`, area: `${area} acres`, premium: `₹${premium.toLocaleString('en-IN')}`, sumInsured: `₹${sumIns.toLocaleString('en-IN')}`, status: 'Pending', statusType: 'warning' });
-  closeInsuranceModal(); renderInsurance();
-  showToast(`PMFBY enrolment for ${crop} submitted! 🛡️`);
-  document.getElementById('ins-crop').value = ''; document.getElementById('ins-area').value = '';
+  
+  if (!crop || !area) { 
+    showToast('Please fill in crop name and area.'); 
+    return; 
+  }
+  
+  const premium = Math.round(area * 310); 
+  const sumIns = area * 15500;
+
+  pendingInsuranceData = {
+    crop: `${crop} (${season})`,
+    area: `${area} acres`,
+    premium: premium,
+    sumInsured: sumIns,
+    rawCrop: crop,
+    rawArea: area,
+    rawSeason: season
+  };
+
+  closeInsuranceModal();
+  document.getElementById('pay-amount-display').innerText = `₹${premium.toLocaleString('en-IN')}`;
+  document.getElementById('insurance-payment-modal').classList.add('open');
+}
+
+function closeInsurancePaymentModal() {
+  document.getElementById('insurance-payment-modal').classList.remove('open');
+}
+
+async function processInsurancePayment() {
+  if (!pendingInsuranceData) return;
+
+  const btn = document.getElementById('process-pay-btn');
+  btn.textContent = 'Processing Payment...';
+  btn.disabled = true;
+
+  // Simulate payment delay
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
+  const paymentRecord = {
+    amount: pendingInsuranceData.premium,
+    purpose: 'Crop Insurance PMFBY',
+    status: 'Success',
+    method: document.getElementById('pay-method').value,
+    date: new Date().toISOString()
+  };
+
+  const insuranceRecord = {
+    crop: pendingInsuranceData.crop,
+    area: pendingInsuranceData.area,
+    premium: `₹${pendingInsuranceData.premium.toLocaleString('en-IN')}`,
+    sumInsured: `₹${pendingInsuranceData.sumInsured.toLocaleString('en-IN')}`,
+    status: 'Active',
+    statusType: 'good',
+    paymentDate: new Date().toISOString()
+  };
+
+  if (firebaseReady && auth.currentUser) {
+    try {
+      const db = getDB();
+      // Store payment
+      await db.collection('payments').add({
+        ...paymentRecord,
+        userId: auth.currentUser.uid
+      });
+      // Store insurance policy
+      await db.collection('crop_insurance').add({
+        ...insuranceRecord,
+        userId: auth.currentUser.uid
+      });
+    } catch (error) {
+      console.error("Failed to save to Firestore", error);
+    }
+  }
+
+  // Update local state
+  SEED_INSURANCE.unshift(insuranceRecord);
+  
+  btn.textContent = 'Pay Now';
+  btn.disabled = false;
+  
+  closeInsurancePaymentModal();
+  renderInsurance();
+  showToast(`Payment successful! Policy active for ${pendingInsuranceData.rawCrop}. ✅`);
+  
+  document.getElementById('ins-crop').value = ''; 
+  document.getElementById('ins-area').value = '';
+  pendingInsuranceData = null;
 }
 
 

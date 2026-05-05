@@ -695,6 +695,41 @@
         <div class="section-divider"></div>
         <h3 class="sub-section-title">📄 My Applications</h3>
         <div id="gov-applications" class="applications-list"></div>
+
+        <!-- Gov Connect Apply Modal -->
+        <div id="gov-apply-modal" class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>🏛️ Apply for Scheme</h3>
+              <button class="modal-close" onclick="closeGovApplyModal()">×</button>
+            </div>
+            <div class="form-group">
+              <label for="gov-scheme-name">Scheme</label>
+              <input type="text" id="gov-scheme-name" disabled>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="gov-app-name">Applicant Name</label>
+                <input type="text" id="gov-app-name" placeholder="Full Name">
+              </div>
+              <div class="form-group">
+                <label for="gov-app-phone">Phone Number</label>
+                <input type="tel" id="gov-app-phone" placeholder="+91 98765 43210">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="gov-app-aadhaar">Aadhaar Number</label>
+                <input type="text" id="gov-app-aadhaar" placeholder="XXXX XXXX XXXX">
+              </div>
+              <div class="form-group">
+                <label for="gov-app-area">Land Area (Acres)</label>
+                <input type="number" id="gov-app-area" placeholder="e.g. 5">
+              </div>
+            </div>
+            <button class="btn-primary btn-full" id="gov-submit-btn" onclick="submitGovApplication()">Submit Application</button>
+          </div>
+        </div>
       </div>
 
       <!-- TAB: Equipment -->
@@ -850,7 +885,30 @@
               <label for="ins-premium">Estimated Premium (₹)</label>
               <input type="text" id="ins-premium" placeholder="Enter area to calculate" disabled>
             </div>
-            <button class="btn-primary btn-full" onclick="submitInsurance()">Submit Application</button>
+            <button class="btn-primary btn-full" onclick="submitInsurance()">Proceed to Payment</button>
+          </div>
+        </div>
+
+        <!-- Insurance Payment Modal -->
+        <div id="insurance-payment-modal" class="modal-overlay">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>💳 Secure Payment</h3>
+              <button class="modal-close" onclick="closeInsurancePaymentModal()">×</button>
+            </div>
+            <div style="text-align:center; padding: 20px 0;">
+              <h2 id="pay-amount-display" style="color: var(--primary); font-size: 32px; margin-bottom: 10px;">₹0</h2>
+              <p style="color: var(--text3); font-size: 14px;">PMFBY Premium Payment</p>
+            </div>
+            <div class="form-group">
+              <label>Select Payment Method</label>
+              <select id="pay-method">
+                <option>UPI (Google Pay, PhonePe, etc.)</option>
+                <option>Net Banking</option>
+                <option>Debit / Credit Card</option>
+              </select>
+            </div>
+            <button class="btn-primary btn-full" id="process-pay-btn" onclick="processInsurancePayment()">Pay Now</button>
           </div>
         </div>
       </div>
@@ -862,6 +920,7 @@
             <h1>🌤️ Weather Advisory</h1>
             <p class="dash-sub">Hyperlocal forecast and agricultural weather intelligence</p>
           </div>
+          <button class="btn-outline" onclick="fetchLiveWeather(true)">🔄 Refresh</button>
         </div>
         <div class="weather-current" id="weather-current"></div>
         <div class="section-divider"></div>
