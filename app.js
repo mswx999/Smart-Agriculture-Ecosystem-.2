@@ -550,6 +550,7 @@ function loadDashboard() {
   }
 
   renderActivities();
+  fetchLiveWeather();
 }
 
 
@@ -806,6 +807,69 @@ function calcPremium() {
 /* ══════════════════════════════════════════
    WEATHER (enhanced)
 ══════════════════════════════════════════ */
+async function fetchLiveWeather() {
+  try {
+    const lat = 28.6139;
+    const lon = 77.2090;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FKolkata`;
+    
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Weather API failed');
+    const data = await response.json();
+
+    const getWeatherDesc = (code) => {
+        if (code === 0) return { desc: 'Clear sky', icon: '☀️' };
+        if (code >= 1 && code <= 3) return { desc: 'Partly cloudy', icon: '🌤️' };
+        if (code >= 45 && code <= 48) return { desc: 'Foggy', icon: '🌫️' };
+        if (code >= 51 && code <= 67) return { desc: 'Rainy', icon: '🌧️' };
+        if (code >= 71 && code <= 77) return { desc: 'Snowy', icon: '❄️' };
+        if (code >= 80 && code <= 82) return { desc: 'Showers', icon: '🌦️' };
+        if (code >= 95 && code <= 99) return { desc: 'Thunderstorm', icon: '⛈️' };
+        return { desc: 'Unknown', icon: '🌤️' };
+    };
+
+    const currentDesc = getWeatherDesc(data.current.weather_code);
+
+    SEED_WEATHER.current = {
+      temp: Math.round(data.current.temperature_2m),
+      desc: currentDesc.desc,
+      humidity: data.current.relative_humidity_2m,
+      wind: Math.round(data.current.wind_speed_10m) + " km/h",
+      rain: data.current.precipitation + "mm",
+      uv: "6"
+    };
+
+    SEED_WEATHER.forecast = data.daily.time.slice(0, 5).map((dateStr, i) => {
+      const date = new Date(dateStr);
+      const dayStr = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const descInfo = getWeatherDesc(data.daily.weather_code[i]);
+      return {
+        day: dayStr,
+        icon: descInfo.icon,
+        high: Math.round(data.daily.temperature_2m_max[i]),
+        low: Math.round(data.daily.temperature_2m_min[i]),
+        rain: data.daily.precipitation_probability_max[i] + "%"
+      };
+    });
+
+    const miniWeather = document.getElementById('dash-weather-mini');
+    if (miniWeather) {
+      miniWeather.innerHTML = `
+        <span class="mini-weather-icon">${currentDesc.icon}</span>
+        <span class="mini-weather-temp">${SEED_WEATHER.current.temp}°C</span>
+        <span class="mini-weather-desc">${SEED_WEATHER.current.desc}</span>
+      `;
+    }
+
+    const weatherTab = document.getElementById('tab-weather');
+    if (weatherTab && weatherTab.style.display === 'block') {
+      renderWeather();
+    }
+  } catch (err) {
+    console.error("Failed to fetch live weather, using fallback data:", err);
+  }
+}
+
 function renderWeather() {
   const w = SEED_WEATHER;
   const currentEl = document.getElementById('weather-current');
