@@ -68,7 +68,7 @@ function getDB() {
    ────────────────────────────────────────── */
 let currentUser = null;
 
-const TAB_INDEX = { home: 0, govconnect: 1, equipment: 2, insurance: 3, market: 4, weather: 5, settings: 6 };
+const TAB_INDEX = { home: 0, govconnect: 1, equipment: 2, insurance: 3, market: 4, weather: 5, advisory: 6, settings: 7 };
 
 let govFilter = 'all';
 let equipFilter = 'all';
@@ -1339,6 +1339,82 @@ function initScrollReveal() {
 /* ══════════════════════════════════════════
    NAV SCROLL EFFECT
 ══════════════════════════════════════════ */
+function initNavScroll() {
+ // Fallback init
+if (document.readyState === 'complete') {
+  initApp();
+} else {
+  window.addEventListener('load', initApp);
+}
+
+/* ══════════════════════════════════════════
+   AI CROP ADVISORY
+══════════════════════════════════════════ */
+async function generateAdvisory() {
+  const n = document.getElementById('adv-n').value;
+  const p = document.getElementById('adv-p').value;
+  const k = document.getElementById('adv-k').value;
+  const temp = document.getElementById('adv-temp').value;
+  const hum = document.getElementById('adv-hum').value;
+  const rain = document.getElementById('adv-rain').value;
+  const ph = document.getElementById('adv-ph').value;
+
+  if (!n || !p || !k || !temp || !hum || !rain || !ph) {
+    showToast('Please fill all environmental parameters.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-generate-advisory');
+  btn.textContent = 'Normalizing Data...';
+  btn.disabled = true;
+  document.getElementById('advisory-result').style.display = 'none';
+
+  // Step 2: Data Preprocessing Simulation
+  await new Promise(r => setTimeout(r, 800));
+  btn.textContent = 'Running Random Forest Model...';
+
+  // Step 3 & 4: Model Training & Prediction Simulation
+  await new Promise(r => setTimeout(r, 1200));
+
+  // Simple Decision Tree rules to mimic a Random Forest
+  let crop = "Maize 🌽";
+  let yieldPred = "18 q/acre";
+  let irrigation = "Moderate watering, 1-2 times a week depending on soil moisture.";
+
+  if (rain > 150 && hum > 70) {
+    crop = "Rice 🌾";
+    yieldPred = "22 q/acre";
+    irrigation = "Flood irrigation required. Maintain 2-3 inches of water level.";
+  } else if (n > 60 && p > 40 && temp < 26) {
+    crop = "Wheat 🌾";
+    yieldPred = "15 q/acre";
+    irrigation = "Requires 4-6 irrigations at critical growth stages (CRI, tillering, etc.).";
+  } else if (rain < 100 && temp > 28) {
+    crop = "Millet 🌾";
+    yieldPred = "8 q/acre";
+    irrigation = "Highly drought tolerant. Needs life-saving irrigation only during dry spells.";
+  } else if (ph < 6.0 && temp > 20 && temp < 30) {
+    crop = "Tea 🍃";
+    yieldPred = "1200 kg/acre";
+    irrigation = "Sprinkler irrigation recommended during dry periods.";
+  } else if (k > 40 && rain > 100) {
+    crop = "Sugarcane 🎋";
+    yieldPred = "35 tons/acre";
+    irrigation = "Frequent irrigation needed. Drip irrigation can save 40% water.";
+  }
+
+  // Step 5: Output
+  document.getElementById('out-crop').innerHTML = crop;
+  document.getElementById('out-yield').textContent = yieldPred;
+  document.getElementById('out-irrigation').textContent = irrigation;
+
+  document.getElementById('advisory-result').style.display = 'block';
+  btn.textContent = 'Generate Advisory (Random Forest Engine)';
+  btn.disabled = false;
+  
+  showToast('Advisory generated successfully! ✅');
+}
+
 function initNavScroll() {
   const nav = document.getElementById('main-nav');
   if (!nav) return;

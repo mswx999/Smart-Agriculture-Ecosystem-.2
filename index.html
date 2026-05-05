@@ -588,6 +588,10 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/><circle cx="12" cy="12" r="4"/></svg>
           Weather
         </div>
+        <div class="nav-item" onclick="switchTab('advisory')">
+          <span style="font-size:18px; line-height:1; margin-right: 6px;">🧠</span>
+          AI Advisory
+        </div>
         <div class="nav-item" onclick="switchTab('settings')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Settings
@@ -933,6 +937,81 @@
         <h3 class="sub-section-title">🌱 Crop Calendar</h3>
         <div id="crop-calendar" class="crop-calendar"></div>
       </div>
+
+      <!-- TAB: AI Advisory -->
+      <div id="tab-advisory" style="display:none">
+        <div class="dash-header">
+          <div>
+            <h1>🧠 AI Crop Advisory</h1>
+            <p class="dash-sub">Simulated Random Forest prediction for crop recommendation and yield</p>
+          </div>
+        </div>
+        
+        <div class="dashboard-grid" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+          <div class="card">
+            <h3 style="margin-bottom: 20px;">Input Parameters</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nitrogen (N)</label>
+                <input type="number" id="adv-n" placeholder="e.g. 90" value="90">
+              </div>
+              <div class="form-group">
+                <label>Phosphorus (P)</label>
+                <input type="number" id="adv-p" placeholder="e.g. 40" value="40">
+              </div>
+              <div class="form-group">
+                <label>Potassium (K)</label>
+                <input type="number" id="adv-k" placeholder="e.g. 40" value="40">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Temperature (°C)</label>
+                <input type="number" id="adv-temp" placeholder="e.g. 25" value="25">
+              </div>
+              <div class="form-group">
+                <label>Humidity (%)</label>
+                <input type="number" id="adv-hum" placeholder="e.g. 80" value="82">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Rainfall (mm)</label>
+                <input type="number" id="adv-rain" placeholder="e.g. 200" value="210">
+              </div>
+              <div class="form-group">
+                <label>pH Level</label>
+                <input type="number" id="adv-ph" placeholder="e.g. 6.5" value="6.5" step="0.1">
+              </div>
+            </div>
+            <button class="btn-primary btn-full" id="btn-generate-advisory" onclick="generateAdvisory()" style="margin-top: 10px;">
+              Generate Advisory (Random Forest Engine)
+            </button>
+          </div>
+
+          <!-- Output Dashboard -->
+          <div id="advisory-result" class="card" style="display:none; background: linear-gradient(135deg, rgba(46,125,50,0.05) 0%, rgba(129,199,132,0.1) 100%); border: 1px solid rgba(46,125,50,0.2);">
+            <h3 style="margin-bottom: 20px; color: var(--primary);"><span style="margin-right: 8px;">📊</span> Prediction Output</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+              <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;">
+                <div style="font-size: 14px; color: var(--text3); margin-bottom: 5px;">Recommended Crop</div>
+                <div id="out-crop" style="font-size: 24px; font-weight: 700; color: var(--primary);">Rice 🌾</div>
+              </div>
+              <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;">
+                <div style="font-size: 14px; color: var(--text3); margin-bottom: 5px;">Expected Yield</div>
+                <div id="out-yield" style="font-size: 24px; font-weight: 700; color: var(--text);">22 q/acre</div>
+              </div>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+              <div style="font-size: 14px; color: var(--text3); margin-bottom: 5px;">Irrigation Suggestion</div>
+              <div id="out-irrigation" style="font-size: 16px; font-weight: 500; color: var(--text);">Flood irrigation required. Maintain 2-3 inches of water level.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <!-- TAB: Sell & Logistics -->
       <div id="tab-market" style="display:none">
