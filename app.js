@@ -1337,17 +1337,6 @@ function initScrollReveal() {
 
 
 /* ══════════════════════════════════════════
-   NAV SCROLL EFFECT
-══════════════════════════════════════════ */
-function initNavScroll() {
- // Fallback init
-if (document.readyState === 'complete') {
-  initApp();
-} else {
-  window.addEventListener('load', initApp);
-}
-
-/* ══════════════════════════════════════════
    AI CROP ADVISORY
 ══════════════════════════════════════════ */
 async function generateAdvisory() {
@@ -1457,3 +1446,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavScroll();
   initKeyboard();
 });
+
+// Fallback init
+if (document.readyState === 'complete') {
+  initApp();
+} else {
+  window.addEventListener('load', initApp);
+}
